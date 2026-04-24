@@ -13,6 +13,7 @@ snakemake = ">=7.32.4,<8"
 prodigal = ">=2.6.3,<3"
 prodigal-gv = ">=2.11.0,<3"
 python-dotenv = ">=1.2.2,<2"
+ipykernel = ">=7.2.0,<8"
 
 [pypi-dependencies]
 genophi = ">=1.0.2, <2"
