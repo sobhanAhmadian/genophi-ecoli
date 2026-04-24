@@ -1,0 +1,18 @@
+[workspace]
+channels = ["conda-forge", "bioconda"]
+name = "genophi-ecoli"
+platforms = ["linux-64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+python = "3.11.*"
+mmseqs2 = ">=18.8cc5c,<19"
+snakemake = ">=7.32.4,<8"
+prodigal = ">=2.6.3,<3"
+prodigal-gv = ">=2.11.0,<3"
+python-dotenv = ">=1.2.2,<2"
+
+[pypi-dependencies]
+genophi = ">=1.0.2, <2"

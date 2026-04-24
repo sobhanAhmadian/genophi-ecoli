@@ -1,0 +1,15 @@
+genophi protein-family-workflow \
+    --input_path_strain data/bacteria/ \
+    --input_path_phage data/phages/ \
+    --phenotype_matrix data/interactions.csv \
+    --output_dir data/output/ \
+    --threads 8 \
+    --num_features 100 \
+    --num_runs_fs 25 \
+    --num_runs_modeling 50 \
+    --method rfe \
+    --use_clustering \
+    --cluster_method hierarchical \
+    --n_clusters 20 \
+    --filter_type strain \
+    --use_shap
