@@ -10,7 +10,10 @@ configfile: "config.json"
 
 rule all:
     input:
-        f"{DATA_DIR}/genophi/done.txt"
+        f"{DATA_DIR}/netbalance/features.csv",
+        f"{DATA_DIR}/netbalance/interactions.txt",
+        f"{DATA_DIR}/netbalance/strains.csv",
+        f"{DATA_DIR}/netbalance/phages.csv",
 
 rule download_picard:
     output:
@@ -74,7 +77,8 @@ rule genophi:
         expand(f"{DATA_DIR}/guelin/protein-seqs/{{genome}}.faa", genome=config["guelin"]),
         f"{DATA_DIR}/interactions.csv"
     output:
-        f"{DATA_DIR}/genophi/done.txt"
+        f"{DATA_DIR}/genophi/phage/presence_absence_matrix.csv",
+        f"{DATA_DIR}/genophi/strain/presence_absence_matrix.csv",
     params:
         picard_dir = f"{DATA_DIR}/picard/protein-seqs",
         guelin_dir = f"{DATA_DIR}/guelin/protein-seqs",
@@ -98,6 +102,18 @@ rule genophi:
             --n_clusters 20 \
             --filter_type strain \
             --use_shap
+        """
 
-        echo "done" > {output}
+rule netbalance:
+    input:
+        f"{DATA_DIR}/genophi/phage/presence_absence_matrix.csv",
+        f"{DATA_DIR}/genophi/strain/presence_absence_matrix.csv",
+    output:
+        f"{DATA_DIR}/netbalance/features.csv",
+        f"{DATA_DIR}/netbalance/interactions.txt",
+        f"{DATA_DIR}/netbalance/strains.csv",
+        f"{DATA_DIR}/netbalance/phages.csv",
+    shell:
+        """
+        python scripts/netbalance.py
         """
