@@ -22,34 +22,52 @@ bacteria_df["strain"] = bacteria_df["strain"].str.upper()
 bacteria_df["strain"] = bacteria_df["strain"].str.replace("_", "", regex=False)
 
 interactions_path = os.path.join(data_dir, "interactions.csv")
-
 idf = pd.read_csv(interactions_path)
-
-df = idf.join(phage_df.set_index("phage"), on="phage", how="inner", lsuffix="phage_")
-df = df.join(
-    bacteria_df.set_index("strain"), on="strain", how="inner", lsuffix="bacteria_"
-)
-
-strains = pd.DataFrame(pd.unique(df["strain"]), columns=["strain"])
-phages = pd.DataFrame(pd.unique(df["phage"]), columns=["phage"])
-strain_to_idx = {s: i for i, s in enumerate(strains["strain"])}
-phage_to_idx = {p: i for i, p in enumerate(phages["phage"])}
-
-df["strain"] = df["strain"].map(strain_to_idx)
-df["phage"] = df["phage"].map(phage_to_idx)
 
 netbalance_dir = os.path.join(data_dir, "netbalance")
 os.makedirs(netbalance_dir, exist_ok=True)
 
-mat = df.to_numpy()[:, :3]
+# Save Strain Features
+print("Saving strain features...")
+strains = pd.DataFrame(pd.unique(idf["strain"]), columns=["strain"])
+sf_df = strains.merge(bacteria_df, on="strain", how="left")
 
-print("Saving data to netbalance directory...")
+sf = sf_df.to_numpy()[:, 1:]
+
+sf_path = os.path.join(data_dir, "netbalance", "strains-features.csv")
+pd.DataFrame(sf).to_csv(sf_path, index=False, header=False)
+pd.DataFrame(sf_df.columns[1:], columns=["feature"]).to_csv(
+    os.path.join(data_dir, "netbalance", "strains-features-names.csv"),
+    index=True,
+)
+strains.to_csv(os.path.join(netbalance_dir, "strains.csv"), index=True)
+
+# Saving Phage Features
+print("Saving phage features...")
+phages = pd.DataFrame(pd.unique(idf["phage"]), columns=["phage"])
+pf_df = phages.merge(phage_df, on="phage", how="left")
+
+pf = pf_df.to_numpy()[:, 1:]
+
+pf_path = os.path.join(data_dir, "netbalance", "phages-features.csv")
+pd.DataFrame(pf).to_csv(pf_path, index=False, header=False)
+pd.DataFrame(pf_df.columns[1:], columns=["feature"]).to_csv(
+    os.path.join(data_dir, "netbalance", "phages-features-names.csv"),
+    index=True,
+)
+phages.to_csv(os.path.join(netbalance_dir, "phages.csv"), index=True)
+
+# Save interactions
+print("Saving interactions...")
+strain_to_idx = {s: i for i, s in enumerate(strains["strain"])}
+phage_to_idx = {p: i for i, p in enumerate(phages["phage"])}
+
+idf["strain"] = idf["strain"].map(strain_to_idx)
+idf["phage"] = idf["phage"].map(phage_to_idx)
+mat = idf.to_numpy()
 np.savetxt(
     os.path.join(netbalance_dir, "interactions.txt"),
     mat.astype(int),
     fmt="%d",
     delimiter=",",
 )
-strains.to_csv(os.path.join(netbalance_dir, "strains.csv"), index=True)
-phages.to_csv(os.path.join(netbalance_dir, "phages.csv"), index=True)
-df.to_csv(os.path.join(netbalance_dir, "features.csv"), index=False)

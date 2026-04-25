@@ -10,10 +10,13 @@ configfile: "config.json"
 
 rule all:
     input:
-        f"{DATA_DIR}/netbalance/features.csv",
         f"{DATA_DIR}/netbalance/interactions.txt",
         f"{DATA_DIR}/netbalance/strains.csv",
+        f"{DATA_DIR}/netbalance/strains-features.csv",
+        f"{DATA_DIR}/netbalance/strains-features-names.csv",
         f"{DATA_DIR}/netbalance/phages.csv",
+        f"{DATA_DIR}/netbalance/phages-features.csv",
+        f"{DATA_DIR}/netbalance/phages-features-names.csv",
 
 rule download_picard:
     output:
@@ -109,10 +112,13 @@ rule netbalance:
         f"{DATA_DIR}/genophi/phage/presence_absence_matrix.csv",
         f"{DATA_DIR}/genophi/strain/presence_absence_matrix.csv",
     output:
-        f"{DATA_DIR}/netbalance/features.csv",
         f"{DATA_DIR}/netbalance/interactions.txt",
         f"{DATA_DIR}/netbalance/strains.csv",
+        f"{DATA_DIR}/netbalance/strains-features.csv",
+        f"{DATA_DIR}/netbalance/strains-features-names.csv",
         f"{DATA_DIR}/netbalance/phages.csv",
+        f"{DATA_DIR}/netbalance/phages-features.csv",
+        f"{DATA_DIR}/netbalance/phages-features-names.csv",
     shell:
         """
         python scripts/netbalance.py
